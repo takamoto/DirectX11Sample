@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\dx">
+      <UniqueIdentifier>{c2c3e20a-324e-4481-a6c1-6f3dfb86185c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\dx11">
+      <UniqueIdentifier>{6e5a873b-27cc-4e6b-8e1c-ec1138f3b42d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\dx11\common">
+      <UniqueIdentifier>{9a54b75a-26d5-4a49-9853-a670fc95cb05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\win">
+      <UniqueIdentifier>{de20570c-fb95-400c-b36d-cb223ff6e927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\win">
+      <UniqueIdentifier>{77ac80a6-7f9a-456b-b351-7d0c7f09b0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\dx\DX11ThinWrapper">
+      <UniqueIdentifier>{e98247f3-3743-442b-8a6c-10b82e082a10}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="WICTextureLoader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\DirectXShaderLevelDefine.h">
+      <Filter>ヘッダー ファイル\dx11\common</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\DXGI_FORMAT.h">
+      <Filter>ヘッダー ファイル\dx11\common</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\DX11GlobalDevice.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="win\com_ptr.hpp">
+      <Filter>ヘッダー ファイル\win</Filter>
+    </ClInclude>
+    <ClInclude Include="win\WICThinWrapper.h">
+      <Filter>ヘッダー ファイル\win</Filter>
+    </ClInclude>
+    <ClInclude Include="win\Window.h">
+      <Filter>ヘッダー ファイル\win</Filter>
+    </ClInclude>
+    <ClInclude Include="win\WindowProcedure.h">
+      <Filter>ヘッダー ファイル\win</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\DX11ThinWrapper.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\DX11DefaultInitialize.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\DX11GlobalDevice.cpp">
+      <Filter>ソース ファイル\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\thin_wrapper\d3.cpp">
+      <Filter>ソース ファイル\dx\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\thin_wrapper\gi.cpp">
+      <Filter>ソース ファイル\dx\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\thin_wrapper\d3shader.cpp">
+      <Filter>ソース ファイル\dx\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\thin_wrapper\d3swapchain.cpp">
+      <Filter>ソース ファイル\dx\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\thin_wrapper\d3buffer.cpp">
+      <Filter>ソース ファイル\dx\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="win\WICThinWrapper.cpp">
+      <Filter>ソース ファイル\win</Filter>
+    </ClCompile>
+    <ClCompile Include="win\Window.cpp">
+      <Filter>ソース ファイル\win</Filter>
+    </ClCompile>
+    <ClCompile Include="win\WindowProcedure.cpp">
+      <Filter>ソース ファイル\win</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\DX11DefaultInitialize.cpp">
+      <Filter>ソース ファイル\dx</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
