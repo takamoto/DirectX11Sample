@@ -36,7 +36,7 @@ static HWND static_CreateWindow(const TCHAR * classname, const TCHAR * title, RE
 		NULL,
 		GetModuleHandle(NULL),
 		NULL
-		);
+	);
 
 	if (hWnd == nullptr) throw std::runtime_error("CreateWindow‚ÉŽ¸”s.");
 	return hWnd;
@@ -45,7 +45,7 @@ static HWND static_CreateWindow(const TCHAR * classname, const TCHAR * title, RE
 namespace win {
 	Window::Window(
 		const TCHAR * classname, const TCHAR * title, RECT rc, DWORD windowStyle, WNDPROC wndProc
-		) {
+	) {
 		m_classname = std::move(std::unique_ptr<TCHAR[]>(new TCHAR[lstrlen(classname) + 1]));
 		lstrcpy(m_classname.get(), classname);
 

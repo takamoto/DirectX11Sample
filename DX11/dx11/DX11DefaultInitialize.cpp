@@ -1,5 +1,6 @@
 #include "DX11DefaultInitialize.h"
 #include "DX11ThinWrapper.h"
+#include <stdexcept>
 
 namespace dx11 {
 	void SetDefaultRenderTarget(IDXGISwapChain * swapChain) {
@@ -10,10 +11,7 @@ namespace dx11 {
 		);
 	}
 	void SetDefaultViewport(IDXGISwapChain * swapChain) {
-		// スワップチェーンの設定を取得する
-		DXGI_SWAP_CHAIN_DESC chainDesc;
-		auto hr = swapChain->GetDesc(&chainDesc);
-		if (FAILED(hr)) throw;
+		auto chainDesc = DX11ThinWrapper::d3::GetSwapChainDescription(swapChain);
 
 		D3D11_VIEWPORT Viewport[1];
 		Viewport[0].TopLeftX = 0;
@@ -43,7 +41,7 @@ namespace dx11 {
 
 		ID3D11RasterizerState* rasterState_raw = nullptr;
 		HRESULT hr = DX11ThinWrapper::d3::AccessD3Device(swapChain)->CreateRasterizerState(&rsState, &rasterState_raw);
-		if (FAILED(hr)) throw;
+		if (FAILED(hr)) throw std::runtime_error("ID3D11RasterizerStateの生成に失敗しました.");
 		auto rasterState = std::shared_ptr<ID3D11RasterizerState>(rasterState_raw, DX11ThinWrapper::ReleaseIUnknown);
 		DX11ThinWrapper::d3::AccessD3Context(swapChain)->RSSetState(rasterState_raw);
 	}

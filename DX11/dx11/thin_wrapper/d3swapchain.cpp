@@ -1,45 +1,49 @@
 #include "../DX11ThinWrapper.h"
+#include <stdexcept>
+
+
+namespace {
+	DXGI_FORMAT TextureFormat2DepthStencilViewFormat(DXGI_FORMAT format) {
+		switch (format) {
+		case DXGI_FORMAT_R8_TYPELESS: return DXGI_FORMAT_R8_UNORM;
+		case DXGI_FORMAT_R16_TYPELESS: return DXGI_FORMAT_D16_UNORM;
+		case DXGI_FORMAT_R32_TYPELESS: return DXGI_FORMAT_D32_FLOAT;
+		case DXGI_FORMAT_R24G8_TYPELESS: return DXGI_FORMAT_D24_UNORM_S8_UINT;
+		default: return format;
+		}
+	}
+
+	D3D11_TEXTURE2D_DESC CreateDepthBufferDESC(IDXGISwapChain * swapChain) {
+		auto chainDesc = DX11ThinWrapper::d3::GetSwapChainDescription(swapChain);
+		D3D11_TEXTURE2D_DESC descDS;
+		::ZeroMemory(&descDS, sizeof(D3D11_TEXTURE2D_DESC));
+		descDS.Width = chainDesc.BufferDesc.Width;
+		descDS.Height = chainDesc.BufferDesc.Height;
+		descDS.MipLevels = 1;                             // ミップマップを作成しない
+		descDS.ArraySize = 1;
+		descDS.Format = DXGI_FORMAT_R32_TYPELESS;
+		descDS.SampleDesc.Count = chainDesc.SampleDesc.Count;
+		descDS.SampleDesc.Quality = chainDesc.SampleDesc.Quality;
+		descDS.Usage = D3D11_USAGE_DEFAULT;
+		descDS.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+		descDS.CPUAccessFlags = 0;
+		descDS.MiscFlags = 0;
+		return descDS;
+	}
+}
 
 namespace DX11ThinWrapper {
 	namespace d3 {
-		namespace {
-			DXGI_FORMAT TextureFormat2DepthStencilViewFormat(DXGI_FORMAT format) {
-				switch (format) {
-				case DXGI_FORMAT_R8_TYPELESS: return DXGI_FORMAT_R8_UNORM;
-				case DXGI_FORMAT_R16_TYPELESS: return DXGI_FORMAT_D16_UNORM;
-				case DXGI_FORMAT_R32_TYPELESS: return DXGI_FORMAT_D32_FLOAT;
-				case DXGI_FORMAT_R24G8_TYPELESS: return DXGI_FORMAT_D24_UNORM_S8_UINT;
-				default: return format;
-				}
-			}
-
-			D3D11_TEXTURE2D_DESC CreateDepthBufferDESC(IDXGISwapChain * swapChain) {
-				// スワップチェーンの設定を取得する
-				DXGI_SWAP_CHAIN_DESC chainDesc;
-				auto hr = swapChain->GetDesc(&chainDesc);
-				if (FAILED(hr)) throw;
-
-				D3D11_TEXTURE2D_DESC descDS;
-				::ZeroMemory(&descDS, sizeof(D3D11_TEXTURE2D_DESC));
-				descDS.Width = chainDesc.BufferDesc.Width;
-				descDS.Height = chainDesc.BufferDesc.Height;
-				descDS.MipLevels = 1;                             // ミップマップを作成しない
-				descDS.ArraySize = 1;
-				descDS.Format = DXGI_FORMAT_R32_TYPELESS;
-				descDS.SampleDesc.Count = chainDesc.SampleDesc.Count;
-				descDS.SampleDesc.Quality = chainDesc.SampleDesc.Quality;
-				descDS.Usage = D3D11_USAGE_DEFAULT;
-				descDS.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-				descDS.CPUAccessFlags = 0;
-				descDS.MiscFlags = 0;
-				return descDS;
-			}
-		};
-
+		DXGI_SWAP_CHAIN_DESC GetSwapChainDescription(IDXGISwapChain * swapChain){
+			DXGI_SWAP_CHAIN_DESC chainDesc;
+			auto hr = swapChain->GetDesc(&chainDesc);
+			if (FAILED(hr)) throw std::runtime_error("スワップチェーンの設定が取得できませんでした.");
+			return chainDesc;
+		}
 		std::shared_ptr<ID3D11RenderTargetView> CreateRenderTargetView(IDXGISwapChain * swapChain) {
 			ID3D11RenderTargetView * view = nullptr;
 			auto hr = AccessD3Device(swapChain)->CreateRenderTargetView(AccessBackBuffer(swapChain).get(), nullptr, &view);
-			if (FAILED(hr)) throw;
+			if (FAILED(hr)) throw std::runtime_error("レンダーターゲットビューの生成に失敗しました.");
 			return std::shared_ptr<ID3D11RenderTargetView>(view, ReleaseIUnknown);
 		}
 		std::shared_ptr<ID3D11DepthStencilView> CreateDepthStencilView(IDXGISwapChain * swapChain) {
@@ -55,7 +59,7 @@ namespace DX11ThinWrapper {
 
 			ID3D11DepthStencilView * depthStencilView = nullptr;
 			auto hr = device->CreateDepthStencilView(depthBuffer.get(), &descDSV, &depthStencilView);
-			if (FAILED(hr)) throw;
+			if (FAILED(hr)) throw std::runtime_error("深度ステンシルビューの生成に失敗しました.");
 
 			return std::shared_ptr<ID3D11DepthStencilView>(depthStencilView, ReleaseIUnknown);
 		}
@@ -86,7 +90,7 @@ namespace DX11ThinWrapper {
 			for (int i = numOfSample; i >= 0; i--) {
 				// サポートするクォリティレベルの最大値を取得する
 				auto hr = device->CheckMultisampleQualityLevels(displayMode->Format, (UINT)i, &quality);
-				if (FAILED(hr)) throw;
+				if (FAILED(hr)) throw std::runtime_error("クォリティレベルの最大値の取得に失敗しました.");
 
 				// 0 以外のときフォーマットとサンプリング数の組み合わせをサポートする
 				// オンラインヘルプではCheckMultisampleQualityLevelsの戻り値が 0 のときサポートされないとかかれているが
@@ -100,7 +104,7 @@ namespace DX11ThinWrapper {
 					if (SUCCEEDED(hr)) break;
 				}
 			}
-			if (swapChain == nullptr) throw;
+			if (swapChain == nullptr) throw std::runtime_error("スワップチェーンの生成に失敗しました.");
 			return std::shared_ptr<IDXGISwapChain>(swapChain, ReleaseIUnknown);
 		}
 	}

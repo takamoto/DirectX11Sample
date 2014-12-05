@@ -1,4 +1,5 @@
 #include "../DX11ThinWrapper.h"
+#include <stdexcept>
 
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -9,7 +10,7 @@ namespace {
 	) {
 		S * shaderObject = nullptr;
 		auto hr = (device->*func)(shader, size, nullptr, &shaderObject);
-		if (FAILED(hr)) throw;
+		if (FAILED(hr)) throw std::runtime_error("シェーダーの生成に失敗しました.");
 		return std::shared_ptr<S>(shaderObject, DX11ThinWrapper::ReleaseIUnknown);
 	}
 }
@@ -29,7 +30,7 @@ namespace DX11ThinWrapper {
 
 			ID3DBlob* blob = nullptr;
 			auto hr = ::D3DCompileFromFile(source, nullptr, nullptr, entryPoint, target, flag1, 0, &blob, nullptr);
-			if (FAILED(hr)) throw;
+			if (FAILED(hr)) throw std::runtime_error("シェーダーファイルのコンパイルに失敗しました.");
 			return std::shared_ptr<ID3DBlob>(blob, ReleaseIUnknown);
 		}
 
@@ -49,7 +50,7 @@ namespace DX11ThinWrapper {
 			auto hr = device->CreateInputLayout(
 				layoutDesc, numOfLayout, (BYTE*)blob->GetBufferPointer(), blob->GetBufferSize(), &layout
 			);
-			if (FAILED(hr))throw;
+			if (FAILED(hr)) throw std::runtime_error("入力レイアウトの生成に失敗しました.");
 			return std::shared_ptr<ID3D11InputLayout>(layout, DX11ThinWrapper::ReleaseIUnknown);
 		}
 	}

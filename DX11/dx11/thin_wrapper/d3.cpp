@@ -1,4 +1,5 @@
 #include "../DX11ThinWrapper.h"
+#include <stdexcept>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -43,27 +44,27 @@ namespace DX11ThinWrapper {
 					);
 				if (SUCCEEDED(hr)) break;
 			}
-			if (!device) throw;
+			if (!device) throw std::runtime_error("ID3D11Deviceの生成に失敗しました.");
 			return std::shared_ptr<ID3D11Device>(device, ReleaseIUnknown);
 		}
 
 		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, D3D11_TEXTURE2D_DESC descDS) {
 			ID3D11Texture2D* buffer = nullptr;
 			auto hr = device->CreateTexture2D(&descDS, nullptr, &buffer);
-			if (FAILED(hr)) throw;
+			if (FAILED(hr)) throw std::runtime_error("ID3D11Texture2Dの生成に失敗しました.");
 			return std::shared_ptr<ID3D11Texture2D>(buffer, ReleaseIUnknown);
 		}
 
 		std::shared_ptr<ID3D11Texture2D> AccessBackBuffer(IDXGISwapChain * swapChain) {
 			ID3D11Texture2D * backBuffer = nullptr;
 			auto hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
-			if (FAILED(hr)) throw;
+			if (FAILED(hr)) throw std::runtime_error("スワップチェーンからバックバッファへのアクセスに失敗しました.");
 			return std::shared_ptr<ID3D11Texture2D>(backBuffer, ReleaseIUnknown);
 		}
 		std::shared_ptr<ID3D11Device> AccessD3Device(IDXGISwapChain * swapChain) {
 			ID3D11Device * device = nullptr;
 			auto hr = swapChain->GetDevice(__uuidof(ID3D11Device), (void **)&device);
-			if (FAILED(hr)) throw;
+			if (FAILED(hr)) throw std::runtime_error("スワップチェーンからデバイスへのアクセスに失敗しました.");
 			return std::shared_ptr<ID3D11Device>(device, ReleaseIUnknown);
 		}
 		std::shared_ptr<ID3D11DeviceContext> AccessD3Context(ID3D11Device * device) {

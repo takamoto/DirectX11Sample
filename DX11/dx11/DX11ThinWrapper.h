@@ -81,6 +81,8 @@ namespace DX11ThinWrapper {
 			DXGI_MODE_DESC * displayMode, HWND hWnd, ID3D11Device * device, bool useMultiSample
 		);
 
+		// スワップチェインの設定を取得
+		DXGI_SWAP_CHAIN_DESC GetSwapChainDescription(IDXGISwapChain * swapChain);
 		// スワップチェインのバックバッファへアクセス
 		std::shared_ptr<ID3D11Texture2D> AccessBackBuffer(IDXGISwapChain * swapChain);
 		// スワップチェインを生成したデバイスへアクセス
