@@ -28,7 +28,7 @@ int APIENTRY _tWinMain(
 		auto device = dx11::AccessDX11Device();
 
 		auto context = DX11ThinWrapper::d3::AccessD3Context(device);
-		auto swapChain = DX11ThinWrapper::d3::CreateSwapChain(&modeDesc, window.getHWnd(), device, true);
+		auto swapChain = dx11::CreateDefaultSwapChain(&modeDesc, window.getHWnd(), device, true);
 		
 		dx11::SetDefaultRenderTarget(swapChain.get());
 		dx11::SetDefaultViewport(swapChain.get());
@@ -63,7 +63,7 @@ int APIENTRY _tWinMain(
 		{
 			{ DirectX::XMFLOAT3(-1.0f, 1.0f, -1.0f), DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
 			{ DirectX::XMFLOAT3(1.0f, 1.0f, -1.0f), DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
-			{ DirectX::XMFLOAT3(1.0f, -1.0f, -1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }
+			{ DirectX::XMFLOAT3(1.0f, -2.0f, -1.0f), DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }
 		};
 		auto vertexBuffer = DX11ThinWrapper::d3::CreateVertexBuffer(device, (void*)vertices, sizeof(vertices));
 	
@@ -110,7 +110,7 @@ int APIENTRY _tWinMain(
 					auto mtxProj = DirectX::XMMatrixPerspectiveFovLH(3.1415926f / 2.0f, aspectRatio, 1.0f, 1000.0f);
 					XMStoreFloat4x4(&param->mtxProj, DirectX::XMMatrixTranspose(mtxProj));
 					auto mtxView = DirectX::XMMatrixLookAtLH(
-						DirectX::XMVectorSet(0.0f, 0.0f, -10.0f, 1),
+						DirectX::XMVectorSet(0.0f, 0.0f, -5.0f, 1),
 						DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1),
 						DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 1)
 					);

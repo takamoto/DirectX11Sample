@@ -13,13 +13,13 @@ namespace DX11ThinWrapper {
 		std::shared_ptr<IDXGIOutput> AccessDisplay(UINT i);
 
 		// 利用可能な表示モードの取得
-		void GetDisplayModes(DXGI_MODE_DESC* pModeDesc, UINT * pNum = nullptr);
+		void GetDisplayModes(DXGI_MODE_DESC* pModeDesc, DXGI_FORMAT format, UINT * pNum = nullptr);
 
 		// 利用可能な表示モードの数を取得
-		UINT GetNumOfDisplayModes();
+		UINT GetNumOfDisplayModes(DXGI_FORMAT format);
 
 		// 適切な解像度のディスプレイモードを取得
-		DXGI_MODE_DESC GetOptDisplayMode(int width, int height);
+		DXGI_MODE_DESC GetOptDisplayMode(int width, int height, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
 
 		// IDXGIAdapter -> IDXGIFactory
 		std::shared_ptr<IDXGIFactory> AccessGIFactory(IDXGIAdapter * adapter);
@@ -71,15 +71,18 @@ namespace DX11ThinWrapper {
 		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, D3D11_TEXTURE2D_DESC descDS);
 		
 		// レンダーターゲットビューの生成
+		// やや決め打ちの部分あり
 		std::shared_ptr<ID3D11RenderTargetView> CreateRenderTargetView(IDXGISwapChain * swapChain);
 		// 深度バッファビューの生成
+		// やや決め打ちの部分あり
 		std::shared_ptr<ID3D11DepthStencilView> CreateDepthStencilView(IDXGISwapChain * swapChain);
 
 
 		// スワップチェインの生成
-		std::shared_ptr<IDXGISwapChain> CreateSwapChain(
-			DXGI_MODE_DESC * displayMode, HWND hWnd, ID3D11Device * device, bool useMultiSample
-		);
+		std::shared_ptr<IDXGISwapChain> CreateSwapChain(ID3D11Device * device, DXGI_SWAP_CHAIN_DESC sd);
+
+		// マルチサンプリングで利用可能な品質レベルの数を取得
+		UINT CheckMultisampleQualityLevels(ID3D11Device * device, DXGI_FORMAT format, UINT sampleCount);
 
 		// スワップチェインの設定を取得
 		DXGI_SWAP_CHAIN_DESC GetSwapChainDescription(IDXGISwapChain * swapChain);

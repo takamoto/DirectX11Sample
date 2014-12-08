@@ -31,9 +31,9 @@ namespace DX11ThinWrapper {
 				auto hr = ::D3D11CreateDevice(
 					nullptr,            // 使用するアダプターを設定。nullptrの場合はデフォルトのアダプター。
 					type,               // D3D_DRIVER_TYPEのいずれか。ドライバーの種類。
-					// pAdapterが nullptr 以外の場合は、D3D_DRIVER_TYPE_UNKNOWNを指定する。
+					                    // pAdapterが nullptr 以外の場合は、D3D_DRIVER_TYPE_UNKNOWNを指定する。
 					nullptr,            // ソフトウェアラスタライザを実装するDLLへのハンドル。
-					// D3D_DRIVER_TYPE を D3D_DRIVER_TYPE_SOFTWARE に設定している場合は nullptr にできない。
+					                    // D3D_DRIVER_TYPE を D3D_DRIVER_TYPE_SOFTWARE に設定している場合は nullptr にできない。
 					createDeviceFlag,   // D3D11_CREATE_DEVICE_FLAGの組み合わせ。デバイスを作成時に使用されるパラメータ。
 					featureLevels,      // D3D_FEATURE_LEVELのポインタ
 					_countof(featureLevels), // D3D_FEATURE_LEVEL配列の要素数
@@ -41,7 +41,7 @@ namespace DX11ThinWrapper {
 					&device,            // 初期化されたデバイス
 					nullptr,            // 採用されたフィーチャーレベル
 					nullptr             // 初期化されたデバイスコンテキスト
-					);
+				);
 				if (SUCCEEDED(hr)) break;
 			}
 			if (!device) throw std::runtime_error("ID3D11Deviceの生成に失敗しました.");

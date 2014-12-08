@@ -29,28 +29,28 @@ namespace DX11ThinWrapper {
 			return std::shared_ptr<IDXGIOutput>(display, ReleaseIUnknown);
 		}
 
-		void GetDisplayModes(DXGI_MODE_DESC* pModeDesc, UINT * pNum) {
+		void GetDisplayModes(DXGI_MODE_DESC* pModeDesc, DXGI_FORMAT format, UINT * pNum) {
 			UINT num;
-			auto hr = AccessDisplay(0)->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, 0, &num, pModeDesc);
+			auto hr = AccessDisplay(0)->GetDisplayModeList(format, 0, &num, pModeDesc);
 			if (FAILED(hr)) throw std::runtime_error("ディスプレイモードの取得に失敗しました.");
 			if (pModeDesc == nullptr && num == 0) throw std::runtime_error("ディスプレイモードが一つも取得できませんでした.");
 
 			if (pNum != nullptr) *pNum = num;
 		}
 
-		UINT GetNumOfDisplayModes() {
+		UINT GetNumOfDisplayModes(DXGI_FORMAT format) {
 			UINT num;
-			GetDisplayModes(nullptr, &num);
+			GetDisplayModes(nullptr, format, &num);
 			return num;
 		}
 
-		DXGI_MODE_DESC GetOptDisplayMode(int width, int height) {
-			auto num = GetNumOfDisplayModes();
+		DXGI_MODE_DESC GetOptDisplayMode(int width, int height, DXGI_FORMAT format) {
+			auto num = GetNumOfDisplayModes(format);
 			auto pModeDescArray = std::shared_ptr<DXGI_MODE_DESC>(
 				new DXGI_MODE_DESC[num],
 				std::default_delete<DXGI_MODE_DESC[]>()
 			);
-			GetDisplayModes(pModeDescArray.get());
+			GetDisplayModes(pModeDescArray.get(), format);
 
 			// 適切な解像度のディスプレイモードを検索する 
 			for (UINT i = 0; i < num; i++) {

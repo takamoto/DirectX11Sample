@@ -3,6 +3,37 @@
 #include <stdexcept>
 
 namespace dx11 {
+
+	std::shared_ptr<IDXGISwapChain> CreateDefaultSwapChain(
+		DXGI_MODE_DESC * displayMode, HWND hWnd, ID3D11Device * device, bool useMultiSample
+	) {
+		DXGI_SWAP_CHAIN_DESC sd;
+		::ZeroMemory(&sd, sizeof(sd));
+
+		::CopyMemory(&(sd.BufferDesc), displayMode, sizeof(DXGI_MODE_DESC)); // ディスプレイモードの設定をコピー
+		sd.BufferCount = 1; // バック・バッファ数
+		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT; // バックバッファの使用方法
+		sd.OutputWindow = hWnd;
+		sd.Windowed = TRUE; // 初期状態はウィンドウモードで
+		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // モードを自動切り替え可能に
+
+		if (!useMultiSample) {
+			sd.SampleDesc.Count = 1;
+			sd.SampleDesc.Quality = 0;
+			return DX11ThinWrapper::d3::CreateSwapChain(device, sd);
+		} else {
+			for (int i = D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT; i >= 0; i--) {
+				auto quality = DX11ThinWrapper::d3::CheckMultisampleQualityLevels(device, displayMode->Format, i);
+				if (quality == 0) continue;
+
+				sd.SampleDesc.Count = i;
+				sd.SampleDesc.Quality = quality - 1;
+				return DX11ThinWrapper::d3::CreateSwapChain(device, sd);
+			}
+		}
+	}
+
 	void SetDefaultRenderTarget(IDXGISwapChain * swapChain) {
 		auto targetView = DX11ThinWrapper::d3::CreateRenderTargetView(swapChain);
 		ID3D11RenderTargetView * targetViews[] = { targetView.get() };

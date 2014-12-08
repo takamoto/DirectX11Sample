@@ -64,48 +64,18 @@ namespace DX11ThinWrapper {
 			return std::shared_ptr<ID3D11DepthStencilView>(depthStencilView, ReleaseIUnknown);
 		}
 
-
-		std::shared_ptr<IDXGISwapChain> CreateSwapChain(
-			DXGI_MODE_DESC * displayMode, HWND hWnd, ID3D11Device * device, bool useMultiSample
-		) {
-			DXGI_SWAP_CHAIN_DESC sd;
-			::ZeroMemory(&sd, sizeof(sd));
-
-			::CopyMemory(&(sd.BufferDesc), displayMode, sizeof(DXGI_MODE_DESC));
-			sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
-			sd.BufferCount = 1;
-			sd.OutputWindow = hWnd;
-			sd.Windowed = TRUE;
-			sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-			sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-			sd.SampleDesc.Count = (useMultiSample) ? 4 : 1;
-			sd.SampleDesc.Quality = 0;
-
-			// サンプリング数の決定
-			int numOfSample = (useMultiSample) ? D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT : 1;
-
-			UINT quality = 0;
+		std::shared_ptr<IDXGISwapChain> CreateSwapChain(ID3D11Device * device, DXGI_SWAP_CHAIN_DESC sd) {
 			IDXGISwapChain * swapChain = nullptr;
-			for (int i = numOfSample; i >= 0; i--) {
-				// サポートするクォリティレベルの最大値を取得する
-				auto hr = device->CheckMultisampleQualityLevels(displayMode->Format, (UINT)i, &quality);
-				if (FAILED(hr)) throw std::runtime_error("クォリティレベルの最大値の取得に失敗しました.");
-
-				// 0 以外のときフォーマットとサンプリング数の組み合わせをサポートする
-				// オンラインヘルプではCheckMultisampleQualityLevelsの戻り値が 0 のときサポートされないとかかれているが
-				// pNumQualityLevels の戻り値が 0 かで判断する。
-				// Direct3D 10 版 のオンラインヘルプにはそうかかれているので、オンラインヘルプの間違い。
-				if (quality != 0) {
-					sd.SampleDesc.Count = i;
-					sd.SampleDesc.Quality = quality - 1;
-
-					hr = gi::AccessGIFactory(device)->CreateSwapChain(device, &sd, &swapChain);
-					if (SUCCEEDED(hr)) break;
-				}
-			}
-			if (swapChain == nullptr) throw std::runtime_error("スワップチェーンの生成に失敗しました.");
+			auto hr = gi::AccessGIFactory(device)->CreateSwapChain(device, &sd, &swapChain);
+			if (FAILED(hr)) throw std::runtime_error("スワップチェーンの生成に失敗しました.");
 			return std::shared_ptr<IDXGISwapChain>(swapChain, ReleaseIUnknown);
+		}
+
+		UINT CheckMultisampleQualityLevels(ID3D11Device * device, DXGI_FORMAT format, UINT sampleCount) {
+			UINT quality = 0;
+			auto hr = device->CheckMultisampleQualityLevels(format, sampleCount, &quality);
+			if (FAILED(hr)) throw std::runtime_error("品質レベルの数の取得に失敗しました.");
+			return quality;
 		}
 	}
 }

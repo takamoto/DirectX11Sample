@@ -10,7 +10,7 @@ namespace {
 		resource->SysMemPitch = 0;
 		resource->SysMemSlicePitch = 0;
 
-		D3D11_BUFFER_DESC BufferDesc = { 0 };
+		D3D11_BUFFER_DESC BufferDesc = {};
 		BufferDesc.ByteWidth = size;
 		BufferDesc.CPUAccessFlags = cpuAccessFlag;
 		BufferDesc.Usage = (cpuAccessFlag == 0) ? D3D11_USAGE_DEFAULT : D3D11_USAGE_DYNAMIC;
