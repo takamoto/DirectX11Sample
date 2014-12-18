@@ -82,9 +82,8 @@ int APIENTRY _tWinMain(
 
 
 		// ターゲットビュー
-		ID3D11RenderTargetView * rv;
-		ID3D11DepthStencilView * dv;
-		context->OMGetRenderTargets(1, &rv, &dv);
+		auto rv = DX11ThinWrapper::d3::AccessRenderTargetViews(context.get(), 1)[0];
+		auto dv = DX11ThinWrapper::d3::AccessDepthStencilView(context.get());
 
 		// ウィンドウ表示
 		::ShowWindow(window.getHWnd(), SW_SHOW);
@@ -98,10 +97,10 @@ int APIENTRY _tWinMain(
 			} else {
 				// バックバッファをクリアする。
 				static float ClearColor[4] = { 0.3f, 0.3f, 1.0f, 1.0f };
-				context->ClearRenderTargetView(rv, ClearColor);
+				context->ClearRenderTargetView(rv.get(), ClearColor);
 
 				// 深度バッファをクリアする。 
-				context->ClearDepthStencilView(dv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+				context->ClearDepthStencilView(dv.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 				// カメラのVP設定
 				DX11ThinWrapper::d3::mapping(cameraBuffer.get(), context.get(), [&](D3D11_MAPPED_SUBRESOURCE resource) {
@@ -139,6 +138,7 @@ int APIENTRY _tWinMain(
 					context->IASetInputLayout(inputLayout.get());
 				
 					// 頂点の並び方を設定
+					// 詳細 http://msdn.microsoft.com/ja-jp/library/ee415716(v=vs.85).aspx
 					context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 					// シェーダーを設定
@@ -151,6 +151,7 @@ int APIENTRY _tWinMain(
 
 				if (FAILED(swapChain->Present(0, 0))) break;
 			}
+
 		} while (msg.message != WM_QUIT);
 	}
 

@@ -76,6 +76,24 @@ namespace DX11ThinWrapper {
 			return AccessD3Context(AccessD3Device(swapChain).get());
 		}
 
+		std::shared_ptr<ID3D11DepthStencilView> AccessDepthStencilView(ID3D11DeviceContext * context) {
+			ID3D11DepthStencilView * dv;
+			context->OMGetRenderTargets(1, NULL, &dv);
+			return std::shared_ptr<ID3D11DepthStencilView>(dv, ReleaseIUnknown);
+		}
+		std::vector<std::shared_ptr<ID3D11RenderTargetView>> AccessRenderTargetViews(
+			ID3D11DeviceContext * context, UINT numOfViews
+		) {
+			ID3D11RenderTargetView * rv;
+			context->OMGetRenderTargets(numOfViews, &rv, NULL);
+
+			std::vector<std::shared_ptr<ID3D11RenderTargetView>> rvs;
+			for (UINT i = 0; i < numOfViews; ++i) rvs.emplace_back(rv+i, ReleaseIUnknown);
+			
+			return rvs;
+		}
+
+
 		void mapping(
 			ID3D11Resource * buffer, ID3D11DeviceContext * context, std::function<void(D3D11_MAPPED_SUBRESOURCE)> function
 		) {

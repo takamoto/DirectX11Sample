@@ -4,6 +4,7 @@
 #include <d2d1_1.h>
 #include <d3dcompiler.h>
 #include <functional>
+#include <vector>
 
 namespace DX11ThinWrapper {
 	inline void ReleaseIUnknown(IUnknown * p) { p->Release(); }
@@ -91,10 +92,17 @@ namespace DX11ThinWrapper {
 		// スワップチェインを生成したデバイスへアクセス
 		std::shared_ptr<ID3D11Device> AccessD3Device(IDXGISwapChain * swapChain);
 
-		// ID3D11Device -> AccessD3Context
+		// ID3D11Device -> ID3D11DeviceContext
 		std::shared_ptr<ID3D11DeviceContext> AccessD3Context(ID3D11Device * device);
-		// IDXGISwapChain -> ID3D11Device -> AccessD3Context
+		// IDXGISwapChain -> ID3D11Device -> ID3D11DeviceContext
 		std::shared_ptr<ID3D11DeviceContext> AccessD3Context(IDXGISwapChain * swapChain);
+
+		// ID3D11DeviceContext -> ID3D11DepthStencilView
+		std::shared_ptr<ID3D11DepthStencilView> AccessDepthStencilView(ID3D11DeviceContext * context);
+		// ID3D11DeviceContext -> ID3D11RenderTargetView
+		std::vector<std::shared_ptr<ID3D11RenderTargetView>> AccessRenderTargetViews(
+			ID3D11DeviceContext * context, UINT numOfViews
+		);
 
 		void mapping(ID3D11Resource * buffer, ID3D11DeviceContext * context, std::function<void(D3D11_MAPPED_SUBRESOURCE)> function);
 	};
