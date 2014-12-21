@@ -14,13 +14,13 @@ namespace DX11ThinWrapper {
 		std::shared_ptr<IDXGIOutput> AccessDisplay(UINT i);
 
 		// 利用可能な表示モードの取得
-		void GetDisplayModes(DXGI_MODE_DESC* pModeDesc, DXGI_FORMAT format, UINT * pNum = nullptr);
+		void GetDisplayModes(DXGI_MODE_DESC* pModeDesc, UINT display_i, DXGI_FORMAT format, UINT * pNum = nullptr);
 
 		// 利用可能な表示モードの数を取得
-		UINT GetNumOfDisplayModes(DXGI_FORMAT format);
+		UINT GetNumOfDisplayModes(UINT display_i, DXGI_FORMAT format);
 
 		// 適切な解像度のディスプレイモードを取得
-		DXGI_MODE_DESC GetOptDisplayMode(int width, int height, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
+		DXGI_MODE_DESC GetOptDisplayMode(int width, int height, UINT display_i = 0, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
 
 		// IDXGIAdapter -> IDXGIFactory
 		std::shared_ptr<IDXGIFactory> AccessGIFactory(IDXGIAdapter * adapter);
@@ -69,8 +69,8 @@ namespace DX11ThinWrapper {
 		);
 
 		// 空のテクスチャリソースの生成
-		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, D3D11_TEXTURE2D_DESC descDS);
-		
+		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, const D3D11_TEXTURE2D_DESC & descDS);
+
 		// レンダーターゲットビューの生成
 		// やや決め打ちの部分あり
 		std::shared_ptr<ID3D11RenderTargetView> CreateRenderTargetView(IDXGISwapChain * swapChain);
@@ -103,6 +103,16 @@ namespace DX11ThinWrapper {
 		std::vector<std::shared_ptr<ID3D11RenderTargetView>> AccessRenderTargetViews(
 			ID3D11DeviceContext * context, UINT numOfViews
 		);
+
+		// ID3D11View -> ID3D11Resource
+		std::shared_ptr<ID3D11Resource> AccessResource(ID3D11View * view);
+
+
+		// WICTextureLoader.h を用いたテクスチャファイル読み込み
+		std::shared_ptr<ID3D11ShaderResourceView> CreateWICTextureFromFile(ID3D11Device * device, const wchar_t * path);
+
+		// サンプラーの生成
+		std::shared_ptr<ID3D11SamplerState> CreateSampler(ID3D11Device * device, const D3D11_SAMPLER_DESC & desc);
 
 		void mapping(ID3D11Resource * buffer, ID3D11DeviceContext * context, std::function<void(D3D11_MAPPED_SUBRESOURCE)> function);
 	};

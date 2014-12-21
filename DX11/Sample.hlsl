@@ -16,6 +16,9 @@ cbuffer cbMeshParam : register( b1 )
 	matrix	mtxWorld		: packoffset( c0 );
 };
 
+Texture2D  texDiffuse  : register(t0);
+SamplerState samDiffuse  : register(s0);
+
 //! 頂点属性
 /*!
 基本はD3D9と変わらない
@@ -24,13 +27,15 @@ cbuffer cbMeshParam : register( b1 )
 */
 struct InputVS
 {
-	float3	pos			: IN_POSITION;
-	float4	color		: IN_COLOR;
+	float3 pos			: IN_POSITION;
+	float2 uv			: IN_UV;
+	float4 color		: IN_COLOR;
 };
 struct OutputVS
 {
-	float4	pos_wvp		: SV_POSITION; // システムに渡す頂点の位置
-	float4	color		: IN_COLOR;
+	float4 pos_wvp		: SV_POSITION; // システムに渡す頂点の位置
+	float2 uv			: IN_UV;
+	float4 color		: IN_COLOR;
 };
 
 //! 頂点シェーダ
@@ -42,6 +47,7 @@ OutputVS RenderVS( InputVS inVert )
 	OutputVS	outVert;
 	outVert.pos_wvp = mul(float4(inVert.pos, 1), mtxWVP);
 	outVert.color = inVert.color;
+	outVert.uv = inVert.uv;
 
 	return outVert;
 }
@@ -50,5 +56,6 @@ OutputVS RenderVS( InputVS inVert )
 //! ピクセルシェーダ
 float4 RenderPS(OutputVS inPixel) : SV_TARGET
 {
-	return inPixel.color;
+	return texDiffuse.Sample(samDiffuse, inPixel.uv);
+	//return inPixel.color;
 }

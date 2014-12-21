@@ -35,20 +35,26 @@ namespace DX11ThinWrapper {
 		}
 
 		std::shared_ptr<ID3D11PixelShader> CreatePixelShader(ID3D11Device* device, ID3DBlob * blob) {
-			return CreateShader(device, (BYTE*)blob->GetBufferPointer(), blob->GetBufferSize(), &ID3D11Device::CreatePixelShader);
+			return CreateShader(
+				device, static_cast<BYTE*>(blob->GetBufferPointer()), blob->GetBufferSize(), &ID3D11Device::CreatePixelShader
+			);
 		}
 		std::shared_ptr<ID3D11VertexShader> CreateVertexShader(ID3D11Device* device, ID3DBlob * blob) {
-			return CreateShader(device, (BYTE*)blob->GetBufferPointer(), blob->GetBufferSize(), &ID3D11Device::CreateVertexShader);
+			return CreateShader(
+				device, static_cast<BYTE*>(blob->GetBufferPointer()), blob->GetBufferSize(), &ID3D11Device::CreateVertexShader
+			);
 		}
 		std::shared_ptr<ID3D11GeometryShader> CreateGeometryShader(ID3D11Device* device, ID3DBlob * blob) {
-			return CreateShader(device, (BYTE*)blob->GetBufferPointer(), blob->GetBufferSize(), &ID3D11Device::CreateGeometryShader);
+			return CreateShader(
+				device, static_cast<BYTE*>(blob->GetBufferPointer()), blob->GetBufferSize(), &ID3D11Device::CreateGeometryShader
+			);
 		}
 		std::shared_ptr<ID3D11InputLayout> CreateInputLayout(
 			ID3D11Device* device, D3D11_INPUT_ELEMENT_DESC layoutDesc[], UINT numOfLayout, ID3DBlob * blob
 		) {
 			ID3D11InputLayout* layout;
 			auto hr = device->CreateInputLayout(
-				layoutDesc, numOfLayout, (BYTE*)blob->GetBufferPointer(), blob->GetBufferSize(), &layout
+				layoutDesc, numOfLayout, static_cast<BYTE*>(blob->GetBufferPointer()), blob->GetBufferSize(), &layout
 			);
 			if (FAILED(hr)) throw std::runtime_error("入力レイアウトの生成に失敗しました.");
 			return std::shared_ptr<ID3D11InputLayout>(layout, DX11ThinWrapper::ReleaseIUnknown);

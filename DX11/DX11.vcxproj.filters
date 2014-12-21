@@ -33,9 +33,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WICTextureLoader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="dx11\DirectXShaderLevelDefine.h">
       <Filter>ヘッダー ファイル\dx11\common</Filter>
     </ClInclude>
@@ -63,12 +60,15 @@
     <ClInclude Include="dx11\DX11DefaultInitialize.h">
       <Filter>ヘッダー ファイル\dx11</Filter>
     </ClInclude>
+    <ClInclude Include="dx11\WICTextureLoader.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11\DX11DefaultSetting.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="WICTextureLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="dx11\DX11GlobalDevice.cpp">
@@ -99,6 +99,15 @@
       <Filter>ソース ファイル\win</Filter>
     </ClCompile>
     <ClCompile Include="dx11\DX11DefaultInitialize.cpp">
+      <Filter>ソース ファイル\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\thin_wrapper\wic.cpp">
+      <Filter>ソース ファイル\dx\DX11ThinWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\WICTextureLoader.cpp">
+      <Filter>ソース ファイル\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\DX11DefaultSetting.cpp">
       <Filter>ソース ファイル\dx</Filter>
     </ClCompile>
   </ItemGroup>

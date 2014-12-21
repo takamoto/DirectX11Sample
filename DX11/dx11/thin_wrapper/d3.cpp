@@ -48,7 +48,7 @@ namespace DX11ThinWrapper {
 			return std::shared_ptr<ID3D11Device>(device, ReleaseIUnknown);
 		}
 
-		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, D3D11_TEXTURE2D_DESC descDS) {
+		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, const D3D11_TEXTURE2D_DESC & descDS) {
 			ID3D11Texture2D* buffer = nullptr;
 			auto hr = device->CreateTexture2D(&descDS, nullptr, &buffer);
 			if (FAILED(hr)) throw std::runtime_error("ID3D11Texture2DÇÃê∂ê¨Ç…é∏îsÇµÇ‹ÇµÇΩ.");
@@ -93,6 +93,18 @@ namespace DX11ThinWrapper {
 			return rvs;
 		}
 
+		std::shared_ptr<ID3D11Resource> AccessResource(ID3D11View * view) {
+			ID3D11Resource * resource;
+			view->GetResource(&resource);
+			return std::shared_ptr<ID3D11Resource>(resource, ReleaseIUnknown);
+		}
+
+		std::shared_ptr<ID3D11SamplerState> CreateSampler(ID3D11Device * device, const D3D11_SAMPLER_DESC & desc) {
+			ID3D11SamplerState * sampler;
+			auto hr = device->CreateSamplerState(&desc, &sampler);
+			if (FAILED(hr)) throw;
+			return std::shared_ptr<ID3D11SamplerState>(sampler, ReleaseIUnknown);
+		}
 
 		void mapping(
 			ID3D11Resource * buffer, ID3D11DeviceContext * context, std::function<void(D3D11_MAPPED_SUBRESOURCE)> function

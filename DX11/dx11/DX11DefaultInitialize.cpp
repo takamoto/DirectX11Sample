@@ -47,8 +47,8 @@ namespace dx11 {
 		D3D11_VIEWPORT Viewport[1];
 		Viewport[0].TopLeftX = 0;
 		Viewport[0].TopLeftY = 0;
-		Viewport[0].Width = (FLOAT)chainDesc.BufferDesc.Width;
-		Viewport[0].Height = (FLOAT)chainDesc.BufferDesc.Height;
+		Viewport[0].Width = static_cast<FLOAT>(chainDesc.BufferDesc.Width);
+		Viewport[0].Height = static_cast<FLOAT>(chainDesc.BufferDesc.Height);
 		Viewport[0].MinDepth = 0.0f;
 		Viewport[0].MaxDepth = 1.0f;
 		DX11ThinWrapper::d3::AccessD3Context(swapChain)->RSSetViewports(1, Viewport);
@@ -66,8 +66,7 @@ namespace dx11 {
 		rsState.AntialiasedLineEnable = FALSE;
 
 		// スワップチェーンのマルチサンプリングの設定にあわせる
-		DXGI_SWAP_CHAIN_DESC swapDesc;
-		swapChain->GetDesc(&swapDesc);
+		auto swapDesc = DX11ThinWrapper::d3::GetSwapChainDescription(swapChain);
 		rsState.MultisampleEnable = (swapDesc.SampleDesc.Count != 1) ? TRUE : FALSE;
 
 		ID3D11RasterizerState* rasterState_raw = nullptr;
