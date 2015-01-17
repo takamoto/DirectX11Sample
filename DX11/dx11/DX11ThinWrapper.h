@@ -72,12 +72,21 @@ namespace DX11ThinWrapper {
 		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, const D3D11_TEXTURE2D_DESC & descDS);
 
 		// レンダーターゲットビューの生成
-		// やや決め打ちの部分あり
-		std::shared_ptr<ID3D11RenderTargetView> CreateRenderTargetView(IDXGISwapChain * swapChain);
-		// 深度バッファビューの生成
-		// やや決め打ちの部分あり
-		std::shared_ptr<ID3D11DepthStencilView> CreateDepthStencilView(IDXGISwapChain * swapChain);
+		std::shared_ptr<ID3D11RenderTargetView> CreateRenderTargetView(
+			IDXGISwapChain * swapChain,
+			const D3D11_RENDER_TARGET_VIEW_DESC * desc = NULL
+		);
 
+
+		// 深度ステンシルビューの生成
+		std::shared_ptr<ID3D11DepthStencilView> CreateDepthStencilView(
+			IDXGISwapChain * swapChain, const D3D11_TEXTURE2D_DESC & descDB, const D3D11_DEPTH_STENCIL_VIEW_DESC * descDSV = NULL
+		);
+		
+		// 深度ステンシルステートの生成
+		std::shared_ptr<ID3D11DepthStencilState> CreateDepthStencilState(
+			ID3D11Device * device, const D3D11_DEPTH_STENCIL_DESC & desc
+		);
 
 		// スワップチェインの生成
 		std::shared_ptr<IDXGISwapChain> CreateSwapChain(ID3D11Device * device, DXGI_SWAP_CHAIN_DESC sd);
@@ -93,9 +102,9 @@ namespace DX11ThinWrapper {
 		std::shared_ptr<ID3D11Device> AccessD3Device(IDXGISwapChain * swapChain);
 
 		// ID3D11Device -> ID3D11DeviceContext
-		std::shared_ptr<ID3D11DeviceContext> AccessD3Context(ID3D11Device * device);
+		std::shared_ptr<ID3D11DeviceContext> AccessD3ImmediateContext(ID3D11Device * device);
 		// IDXGISwapChain -> ID3D11Device -> ID3D11DeviceContext
-		std::shared_ptr<ID3D11DeviceContext> AccessD3Context(IDXGISwapChain * swapChain);
+		std::shared_ptr<ID3D11DeviceContext> AccessD3ImmediateContext(IDXGISwapChain * swapChain);
 
 		// ID3D11DeviceContext -> ID3D11DepthStencilView
 		std::shared_ptr<ID3D11DepthStencilView> AccessDepthStencilView(ID3D11DeviceContext * context);
@@ -111,8 +120,15 @@ namespace DX11ThinWrapper {
 		// WICTextureLoader.h を用いたテクスチャファイル読み込み
 		std::shared_ptr<ID3D11ShaderResourceView> CreateWICTextureFromFile(ID3D11Device * device, const wchar_t * path);
 
-		// サンプラーの生成
+		// サンプラーステートの生成
 		std::shared_ptr<ID3D11SamplerState> CreateSampler(ID3D11Device * device, const D3D11_SAMPLER_DESC & desc);
+
+		// ラスタライザーステートの生成
+		std::shared_ptr<ID3D11RasterizerState> CreateRasterizerState(ID3D11Device * device, const D3D11_RASTERIZER_DESC & desc);
+
+		// ブレンドステートの生成
+		std::shared_ptr<ID3D11BlendState> CreateBlendState(ID3D11Device * device, const D3D11_BLEND_DESC & desc);
+
 
 		void mapping(ID3D11Resource * buffer, ID3D11DeviceContext * context, std::function<void(D3D11_MAPPED_SUBRESOURCE)> function);
 	};

@@ -1,4 +1,6 @@
 #include "DX11DefaultInitialize.h"
+
+#include "DX11DefaultSetting.h"
 #include "DX11ThinWrapper.h"
 #include <stdexcept>
 
@@ -34,14 +36,7 @@ namespace dx11 {
 		}
 	}
 
-	void SetDefaultRenderTarget(IDXGISwapChain * swapChain) {
-		auto targetView = DX11ThinWrapper::d3::CreateRenderTargetView(swapChain);
-		ID3D11RenderTargetView * targetViews[] = { targetView.get() };
-		DX11ThinWrapper::d3::AccessD3Context(swapChain)->OMSetRenderTargets(
-			1, targetViews, DX11ThinWrapper::d3::CreateDepthStencilView(swapChain).get()
-		);
-	}
-	void SetDefaultViewport(IDXGISwapChain * swapChain) {
+	void SetDefaultViewport(ID3D11DeviceContext * context, IDXGISwapChain * swapChain) {
 		auto chainDesc = DX11ThinWrapper::d3::GetSwapChainDescription(swapChain);
 
 		D3D11_VIEWPORT Viewport[1];
@@ -51,28 +46,6 @@ namespace dx11 {
 		Viewport[0].Height = static_cast<FLOAT>(chainDesc.BufferDesc.Height);
 		Viewport[0].MinDepth = 0.0f;
 		Viewport[0].MaxDepth = 1.0f;
-		DX11ThinWrapper::d3::AccessD3Context(swapChain)->RSSetViewports(1, Viewport);
-	}
-	void SetDefaultRasterize(IDXGISwapChain * swapChain) {
-		D3D11_RASTERIZER_DESC rsState;
-		rsState.FillMode = D3D11_FILL_SOLID;
-		rsState.CullMode = D3D11_CULL_NONE;
-		rsState.FrontCounterClockwise = FALSE;
-		rsState.DepthBias = 0;
-		rsState.DepthBiasClamp = 0;
-		rsState.SlopeScaledDepthBias = 0;
-		rsState.DepthClipEnable = TRUE;
-		rsState.ScissorEnable = FALSE;
-		rsState.AntialiasedLineEnable = FALSE;
-
-		// スワップチェーンのマルチサンプリングの設定にあわせる
-		auto swapDesc = DX11ThinWrapper::d3::GetSwapChainDescription(swapChain);
-		rsState.MultisampleEnable = (swapDesc.SampleDesc.Count != 1) ? TRUE : FALSE;
-
-		ID3D11RasterizerState* rasterState_raw = nullptr;
-		HRESULT hr = DX11ThinWrapper::d3::AccessD3Device(swapChain)->CreateRasterizerState(&rsState, &rasterState_raw);
-		if (FAILED(hr)) throw std::runtime_error("ID3D11RasterizerStateの生成に失敗しました.");
-		auto rasterState = std::shared_ptr<ID3D11RasterizerState>(rasterState_raw, DX11ThinWrapper::ReleaseIUnknown);
-		DX11ThinWrapper::d3::AccessD3Context(swapChain)->RSSetState(rasterState_raw);
+		context->RSSetViewports(1, Viewport);
 	}
 };

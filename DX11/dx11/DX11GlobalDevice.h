@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <d3d11.h>
 
 // ‚ ‚Ü‚è—Ç‚­‚È‚¢İŒv‚¾‚Æv‚¤‚©‚ç‚ ‚Æ‚Å’¼‚·
 

@@ -26,7 +26,7 @@ namespace DX11ThinWrapper {
 				D3D_FEATURE_LEVEL_10_0,
 			};
 
-			ID3D11Device * device = nullptr;
+			ID3D11Device * device;
 			for (auto type : driverTypes) {
 				auto hr = ::D3D11CreateDevice(
 					nullptr,            // 使用するアダプターを設定。nullptrの場合はデフォルトのアダプター。
@@ -49,31 +49,31 @@ namespace DX11ThinWrapper {
 		}
 
 		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, const D3D11_TEXTURE2D_DESC & descDS) {
-			ID3D11Texture2D* buffer = nullptr;
+			ID3D11Texture2D* buffer;
 			auto hr = device->CreateTexture2D(&descDS, nullptr, &buffer);
 			if (FAILED(hr)) throw std::runtime_error("ID3D11Texture2Dの生成に失敗しました.");
 			return std::shared_ptr<ID3D11Texture2D>(buffer, ReleaseIUnknown);
 		}
 
 		std::shared_ptr<ID3D11Texture2D> AccessBackBuffer(IDXGISwapChain * swapChain) {
-			ID3D11Texture2D * backBuffer = nullptr;
+			ID3D11Texture2D * backBuffer;
 			auto hr = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
 			if (FAILED(hr)) throw std::runtime_error("スワップチェーンからバックバッファへのアクセスに失敗しました.");
 			return std::shared_ptr<ID3D11Texture2D>(backBuffer, ReleaseIUnknown);
 		}
 		std::shared_ptr<ID3D11Device> AccessD3Device(IDXGISwapChain * swapChain) {
-			ID3D11Device * device = nullptr;
+			ID3D11Device * device;
 			auto hr = swapChain->GetDevice(__uuidof(ID3D11Device), (void **)&device);
 			if (FAILED(hr)) throw std::runtime_error("スワップチェーンからデバイスへのアクセスに失敗しました.");
 			return std::shared_ptr<ID3D11Device>(device, ReleaseIUnknown);
 		}
-		std::shared_ptr<ID3D11DeviceContext> AccessD3Context(ID3D11Device * device) {
-			ID3D11DeviceContext * context = nullptr;
+		std::shared_ptr<ID3D11DeviceContext> AccessD3ImmediateContext(ID3D11Device * device) {
+			ID3D11DeviceContext * context;
 			device->GetImmediateContext(&context);
 			return std::shared_ptr<ID3D11DeviceContext>(context, ReleaseIUnknown);
 		}
-		std::shared_ptr<ID3D11DeviceContext> AccessD3Context(IDXGISwapChain * swapChain) {
-			return AccessD3Context(AccessD3Device(swapChain).get());
+		std::shared_ptr<ID3D11DeviceContext> AccessD3ImmediateContext(IDXGISwapChain * swapChain) {
+			return AccessD3ImmediateContext(AccessD3Device(swapChain).get());
 		}
 
 		std::shared_ptr<ID3D11DepthStencilView> AccessDepthStencilView(ID3D11DeviceContext * context) {
@@ -106,15 +106,36 @@ namespace DX11ThinWrapper {
 			return std::shared_ptr<ID3D11SamplerState>(sampler, ReleaseIUnknown);
 		}
 
+		std::shared_ptr<ID3D11RasterizerState> CreateRasterizerState(ID3D11Device * device, const D3D11_RASTERIZER_DESC & desc) {
+			ID3D11RasterizerState * rasterState;
+			HRESULT hr = device->CreateRasterizerState(&desc, &rasterState);
+			if (FAILED(hr)) throw std::runtime_error("ID3D11RasterizerStateの生成に失敗しました.");
+			return std::shared_ptr<ID3D11RasterizerState>(rasterState, DX11ThinWrapper::ReleaseIUnknown);
+		}
+		std::shared_ptr<ID3D11BlendState> CreateBlendState(ID3D11Device * device, const D3D11_BLEND_DESC & desc) {
+			ID3D11BlendState * blendState;
+			auto hr = device->CreateBlendState(&desc, &blendState);
+			if (FAILED(hr)) throw std::runtime_error("ID3D11BlendStateの生成に失敗しました．");
+			return std::shared_ptr<ID3D11BlendState>(blendState, DX11ThinWrapper::ReleaseIUnknown);
+		}
+
 		void mapping(
 			ID3D11Resource * buffer, ID3D11DeviceContext * context, std::function<void(D3D11_MAPPED_SUBRESOURCE)> function
 		) {
+			class Guard{
+			public:
+				Guard(ID3D11Resource * buffer, ID3D11DeviceContext * context) : buffer(buffer), context(context) {}
+				~Guard() { context->Unmap(buffer, 0); }
+			private:
+				ID3D11Resource * buffer;
+				ID3D11DeviceContext * context;
+			};
+
 			D3D11_MAPPED_SUBRESOURCE resource;
 			auto hr = context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-			if (SUCCEEDED(hr)) {
-				function(resource);
-				context->Unmap(buffer, 0);
-			}
+			if (FAILED(hr)) throw std::runtime_error("サブリソースへのアクセスに失敗しました．"); 
+			Guard(buffer, context);
+			function(resource);
 		}
 	}
 }

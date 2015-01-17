@@ -88,21 +88,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="dx11\DX11Canvas.h" />
     <ClInclude Include="dx11\DX11DefaultInitialize.h" />
     <ClInclude Include="dx11\DX11DefaultSetting.h" />
     <ClInclude Include="dx11\DX11GlobalDevice.h" />
     <ClInclude Include="dx11\DirectXShaderLevelDefine.h" />
+    <ClInclude Include="dx11\DX11WrappedPrimitive.h" />
     <ClInclude Include="dx11\DXGI_FORMAT.h" />
     <ClInclude Include="dx11\DX11ThinWrapper.h">
       <FileType>CppHeader</FileType>
     </ClInclude>
     <ClInclude Include="dx11\WICTextureLoader.h" />
+    <ClInclude Include="Viewport.h" />
     <ClInclude Include="win\com_ptr.hpp" />
-    <ClInclude Include="win\WICThinWrapper.h" />
     <ClInclude Include="win\Window.h" />
     <ClInclude Include="win\WindowProcedure.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dx11\DX11Canvas.cpp" />
     <ClCompile Include="dx11\DX11DefaultInitialize.cpp" />
     <ClCompile Include="dx11\DX11DefaultSetting.cpp" />
     <ClCompile Include="dx11\DX11GlobalDevice.cpp" />
@@ -114,7 +118,6 @@
     <ClCompile Include="dx11\thin_wrapper\wic.cpp" />
     <ClCompile Include="dx11\WICTextureLoader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="win\WICThinWrapper.cpp" />
     <ClCompile Include="win\Window.cpp" />
     <ClCompile Include="win\WindowProcedure.cpp" />
   </ItemGroup>
