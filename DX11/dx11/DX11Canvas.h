@@ -14,11 +14,17 @@ class Viewport;
 namespace dx11 {
 	struct CameraParam;
 	struct ViewportParam;
+	class FXAntiAliasing;
 
 	class Canvas{
 	private:
+		// fxaa
+		std::shared_ptr<ID3D11Texture2D> proxyBuffer;
+		std::shared_ptr<ID3D11RenderTargetView> renderTargetView_proxyBuffer;
+		std::shared_ptr<FXAntiAliasing> fxaa;
+
 		// ƒrƒ…[
-		std::shared_ptr<ID3D11RenderTargetView> renderTargetView;
+		std::shared_ptr<ID3D11RenderTargetView> renderTargetView_swapChain;
 		std::shared_ptr<ID3D11DepthStencilView> depthStencilView;
 
 		// •`‰æİ’è
@@ -38,6 +44,7 @@ namespace dx11 {
 
 		// 
 		int numOfViewport = -1;
+		bool enableFXAA = true;
 	public:
 		Canvas() = delete;
 		Canvas(const std::shared_ptr<ID3D11DeviceContext> & deivceContext, const std::shared_ptr<IDXGISwapChain> & swapChain);

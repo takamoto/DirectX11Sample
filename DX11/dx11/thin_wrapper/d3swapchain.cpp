@@ -11,14 +11,23 @@ namespace DX11ThinWrapper {
 		}
 		
 		std::shared_ptr<ID3D11RenderTargetView> CreateRenderTargetView(
-			IDXGISwapChain * swapChain,
+			ID3D11Device * device,
+			ID3D11Texture2D * texture,
 			const D3D11_RENDER_TARGET_VIEW_DESC * desc
 		) {
 			ID3D11RenderTargetView * view;
-			auto hr = AccessD3Device(swapChain)->CreateRenderTargetView(AccessBackBuffer(swapChain).get(), desc, &view);
+			auto hr = device->CreateRenderTargetView(texture, desc, &view);
 			if (FAILED(hr)) throw std::runtime_error("レンダーターゲットビューの生成に失敗しました.");
 			return std::shared_ptr<ID3D11RenderTargetView>(view, ReleaseIUnknown);
 		}
+
+		std::shared_ptr<ID3D11RenderTargetView> CreateRenderTargetView(
+			IDXGISwapChain * swapChain,
+			const D3D11_RENDER_TARGET_VIEW_DESC * desc
+		) {
+			return CreateRenderTargetView(AccessD3Device(swapChain).get(), AccessBackBuffer(swapChain).get());
+		}
+
 
 		std::shared_ptr<ID3D11DepthStencilView> CreateDepthStencilView(
 			IDXGISwapChain * swapChain, const D3D11_TEXTURE2D_DESC & descDB, const D3D11_DEPTH_STENCIL_VIEW_DESC * descDSV
@@ -27,7 +36,7 @@ namespace DX11ThinWrapper {
 			auto depthBuffer = CreateTexture2D(device.get(), descDB);
 
 
-			ID3D11DepthStencilView * depthStencilView = nullptr;
+			ID3D11DepthStencilView * depthStencilView;
 			auto hr = device->CreateDepthStencilView(depthBuffer.get(), descDSV, &depthStencilView);
 			if (FAILED(hr)) throw std::runtime_error("深度ステンシルビューの生成に失敗しました.");
 

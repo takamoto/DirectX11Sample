@@ -48,6 +48,12 @@ namespace DX11ThinWrapper {
 			return std::shared_ptr<ID3D11Device>(device, ReleaseIUnknown);
 		}
 
+		D3D11_TEXTURE2D_DESC GetTexture2DDescription(ID3D11Texture2D * texture){
+			D3D11_TEXTURE2D_DESC desc;
+			texture->GetDesc(&desc);
+			return desc;
+		}
+
 		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, const D3D11_TEXTURE2D_DESC & descDS) {
 			ID3D11Texture2D* buffer;
 			auto hr = device->CreateTexture2D(&descDS, nullptr, &buffer);
@@ -78,14 +84,14 @@ namespace DX11ThinWrapper {
 
 		std::shared_ptr<ID3D11DepthStencilView> AccessDepthStencilView(ID3D11DeviceContext * context) {
 			ID3D11DepthStencilView * dv;
-			context->OMGetRenderTargets(1, NULL, &dv);
+			context->OMGetRenderTargets(1, nullptr, &dv);
 			return std::shared_ptr<ID3D11DepthStencilView>(dv, ReleaseIUnknown);
 		}
 		std::vector<std::shared_ptr<ID3D11RenderTargetView>> AccessRenderTargetViews(
 			ID3D11DeviceContext * context, UINT numOfViews
 		) {
 			ID3D11RenderTargetView * rv;
-			context->OMGetRenderTargets(numOfViews, &rv, NULL);
+			context->OMGetRenderTargets(numOfViews, &rv, nullptr);
 
 			std::vector<std::shared_ptr<ID3D11RenderTargetView>> rvs;
 			for (UINT i = 0; i < numOfViews; ++i) rvs.emplace_back(rv+i, ReleaseIUnknown);
@@ -117,6 +123,23 @@ namespace DX11ThinWrapper {
 			auto hr = device->CreateBlendState(&desc, &blendState);
 			if (FAILED(hr)) throw std::runtime_error("ID3D11BlendStateÇÃê∂ê¨Ç…é∏îsÇµÇ‹ÇµÇΩÅD");
 			return std::shared_ptr<ID3D11BlendState>(blendState, DX11ThinWrapper::ReleaseIUnknown);
+		}
+
+		std::shared_ptr<ID3D11ShaderResourceView> CreateShaderResourceView(
+			ID3D11Device * device,
+			ID3D11Resource * resource,
+			const D3D11_SHADER_RESOURCE_VIEW_DESC * desc
+		){
+			ID3D11ShaderResourceView * view;
+			auto hr = device->CreateShaderResourceView(resource, desc, &view);
+			if (FAILED(hr)) throw std::runtime_error("ID3D11ShaderResourceViewÇÃê∂ê¨Ç…é∏îsÇµÇ‹ÇµÇΩÅD");
+			return std::shared_ptr<ID3D11ShaderResourceView>(view, DX11ThinWrapper::ReleaseIUnknown);
+		}
+
+		std::shared_ptr<ID3D11Device> AccessDevice(ID3D11Resource * resource){
+			ID3D11Device * device;
+			resource->GetDevice(&device);
+			return std::shared_ptr<ID3D11Device>(device, DX11ThinWrapper::ReleaseIUnknown);
 		}
 
 		void mapping(

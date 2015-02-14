@@ -51,7 +51,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;SHADER_LEVEL_4_1;INDEX_UINT16;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;SHADER_LEVEL_5_0;INDEX_UINT16;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
@@ -99,6 +99,7 @@
     <ClInclude Include="dx11\DX11ThinWrapper.h">
       <FileType>CppHeader</FileType>
     </ClInclude>
+    <ClInclude Include="dx11\FXAA.h" />
     <ClInclude Include="dx11\WICTextureLoader.h" />
     <ClInclude Include="Viewport.h" />
     <ClInclude Include="win\com_ptr.hpp" />
@@ -110,6 +111,7 @@
     <ClCompile Include="dx11\DX11DefaultInitialize.cpp" />
     <ClCompile Include="dx11\DX11DefaultSetting.cpp" />
     <ClCompile Include="dx11\DX11GlobalDevice.cpp" />
+    <ClCompile Include="dx11\FXAA.cpp" />
     <ClCompile Include="dx11\thin_wrapper\d3buffer.cpp" />
     <ClCompile Include="dx11\thin_wrapper\d3.cpp" />
     <ClCompile Include="dx11\thin_wrapper\gi.cpp" />

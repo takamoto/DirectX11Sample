@@ -68,10 +68,25 @@ namespace DX11ThinWrapper {
 			ID3D11Device* device, void* data, size_t size, UINT cpuAccessFlag = 0
 		);
 
+		// テクスチャの設定を取得
+		D3D11_TEXTURE2D_DESC GetTexture2DDescription(ID3D11Texture2D * texture);
+
 		// 空のテクスチャリソースの生成
 		std::shared_ptr<ID3D11Texture2D> CreateTexture2D(ID3D11Device * device, const D3D11_TEXTURE2D_DESC & descDS);
 
+		// シェーダーリソースビューの生成
+		std::shared_ptr<ID3D11ShaderResourceView> CreateShaderResourceView(
+			ID3D11Device * device,
+			ID3D11Resource * resource,
+			const D3D11_SHADER_RESOURCE_VIEW_DESC * desc = NULL
+		);
+
 		// レンダーターゲットビューの生成
+		std::shared_ptr<ID3D11RenderTargetView> CreateRenderTargetView(
+			ID3D11Device * device,
+			ID3D11Texture2D * texture,
+			const D3D11_RENDER_TARGET_VIEW_DESC * desc = NULL
+		);
 		std::shared_ptr<ID3D11RenderTargetView> CreateRenderTargetView(
 			IDXGISwapChain * swapChain,
 			const D3D11_RENDER_TARGET_VIEW_DESC * desc = NULL
@@ -129,6 +144,8 @@ namespace DX11ThinWrapper {
 		// ブレンドステートの生成
 		std::shared_ptr<ID3D11BlendState> CreateBlendState(ID3D11Device * device, const D3D11_BLEND_DESC & desc);
 
+		// ID3D11Resource -> ID3D11Device
+		std::shared_ptr<ID3D11Device> AccessDevice(ID3D11Resource * resource);
 
 		void mapping(ID3D11Resource * buffer, ID3D11DeviceContext * context, std::function<void(D3D11_MAPPED_SUBRESOURCE)> function);
 	};

@@ -1,9 +1,12 @@
 #include "DX11Canvas.h"
 
 #include <array>
+#include <tchar.h>
+#include "DirectXShaderLevelDefine.h"
 #include "DX11ThinWrapper.h"
 #include "DX11GlobalDevice.h"
 #include "DX11DefaultSetting.h"
+#include "FXAA.h"
 #include "../Camera.h"
 #include "../Viewport.h"
 
@@ -56,12 +59,12 @@ namespace dx11{
 	) : deviceContext(deivceContext), swapChain(swapChain){
 		auto device = DX11ThinWrapper::d3::AccessD3Device(swapChain.get());
 		
-		// ビューの生成
+		// swapchain周り
 		auto descDB = default_setting::DepthBuffer(swapChain.get());
 		depthStencilView = DX11ThinWrapper::d3::CreateDepthStencilView(
 			swapChain.get(), descDB, &default_setting::DepthStencilView(descDB)
 		);
-		renderTargetView = DX11ThinWrapper::d3::CreateRenderTargetView(swapChain.get());
+		renderTargetView_swapChain = DX11ThinWrapper::d3::CreateRenderTargetView(swapChain.get());
 
 		// 描画設定の生成
 		depthStencilState = DX11ThinWrapper::d3::CreateDepthStencilState(device.get(), default_setting::DepthStencil());
@@ -73,6 +76,13 @@ namespace dx11{
 		// 定数バッファ生成
 		cameraBuffer = CameraBuffer(device.get(), nullptr, D3D11_CPU_ACCESS_WRITE);
 		viewportBuffer = ViewportBuffer(device.get(), nullptr, D3D11_CPU_ACCESS_WRITE);
+
+		// fxaa
+		proxyBuffer = DX11ThinWrapper::d3::CreateTexture2D(
+			device.get(), dx11::default_setting::RenderTargetBuffer(swapChain.get())
+		);
+		renderTargetView_proxyBuffer = DX11ThinWrapper::d3::CreateRenderTargetView(device.get(), proxyBuffer.get());
+		fxaa = std::make_shared<FXAntiAliasing>(swapChain.get(), proxyBuffer.get());
 	}
 
 	void Canvas::begin(
@@ -88,6 +98,7 @@ namespace dx11{
 		assert(viewports.size() <= 4);
 
 		// キャンバスのクリア
+		auto & renderTargetView = (enableFXAA) ? renderTargetView_proxyBuffer : renderTargetView_swapChain;
 		deviceContext->ClearRenderTargetView(renderTargetView.get(), ClearColor);
 		deviceContext->ClearDepthStencilView(depthStencilView.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -125,6 +136,14 @@ namespace dx11{
 	bool Canvas::end() {
 		assert(numOfViewport>-1);
 		numOfViewport = -1;
+		if (enableFXAA){
+			auto bufferDesc = DX11ThinWrapper::d3::GetSwapChainDescription(swapChain.get()).BufferDesc;
+			fxaa->apply(
+				deviceContext.get(),
+				renderTargetView_swapChain.get(),
+				{ 0, 0, bufferDesc.Width, bufferDesc.Height, 0.0f, 1.0f }
+			);
+		}
 		return SUCCEEDED(swapChain->Present(0, 0));
 	}
 

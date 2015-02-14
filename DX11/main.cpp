@@ -142,9 +142,9 @@ int APIENTRY _tWinMain(
 					context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 					// シェーダーを設定
-					context->VSSetShader(vertexShader.get(), NULL, 0);
-					context->GSSetShader(geometryShader.get(), NULL, 0);
-					context->PSSetShader(pixelShader.get(), NULL, 0);
+					context->VSSetShader(vertexShader.get(), nullptr, 0);
+					context->GSSetShader(geometryShader.get(), nullptr, 0);
+					context->PSSetShader(pixelShader.get(), nullptr, 0);
 
 					// テクスチャをセット
 					ID3D11ShaderResourceView * views[] = { tex.get() };

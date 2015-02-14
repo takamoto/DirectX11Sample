@@ -16,6 +16,21 @@ namespace {
 
 namespace dx11 {
 	namespace default_setting{
+		D3D11_TEXTURE2D_DESC RenderTargetBuffer(IDXGISwapChain * swapChain){
+			auto swapChainDesc = DX11ThinWrapper::d3::GetSwapChainDescription(swapChain);
+
+			D3D11_TEXTURE2D_DESC desc;
+			::ZeroMemory(&desc, sizeof(desc));
+			desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			desc.Format = swapChainDesc.BufferDesc.Format;
+			desc.Height = swapChainDesc.BufferDesc.Height;
+			desc.Width = swapChainDesc.BufferDesc.Width;
+			desc.ArraySize = 1;
+			desc.MipLevels = 1;
+			desc.SampleDesc.Count = swapChainDesc.SampleDesc.Count;
+			desc.SampleDesc.Quality = swapChainDesc.SampleDesc.Quality;
+			return desc;
+		}
 
 		D3D11_RENDER_TARGET_BLEND_DESC RenderTargetBlend(){
 			D3D11_RENDER_TARGET_BLEND_DESC desc;
@@ -52,10 +67,12 @@ namespace dx11 {
 			return desc;
 		}
 
-		D3D11_RASTERIZER_DESC Rasterizer(IDXGISwapChain * swapChain) {
+		D3D11_RASTERIZER_DESC Rasterizer(
+			IDXGISwapChain * swapChain, D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode
+		) {
 			D3D11_RASTERIZER_DESC desc;
-			desc.FillMode = D3D11_FILL_SOLID;
-			desc.CullMode = D3D11_CULL_NONE;
+			desc.FillMode = fillMode;
+			desc.CullMode = cullMode;
 			desc.FrontCounterClockwise = FALSE;
 			desc.DepthBias = 0;
 			desc.DepthBiasClamp = 0;

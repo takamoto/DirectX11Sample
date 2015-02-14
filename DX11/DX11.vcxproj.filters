@@ -75,6 +75,9 @@
     <ClInclude Include="Viewport.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="dx11\FXAA.h">
+      <Filter>ヘッダー ファイル\dx11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -117,6 +120,9 @@
       <Filter>ソース ファイル\dx</Filter>
     </ClCompile>
     <ClCompile Include="dx11\DX11Canvas.cpp">
+      <Filter>ソース ファイル\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="dx11\FXAA.cpp">
       <Filter>ソース ファイル\dx</Filter>
     </ClCompile>
   </ItemGroup>
