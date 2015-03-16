@@ -4,7 +4,7 @@
 #include "DX11WrappedPrimitive.h"
 
 namespace dx11{
-	class FXAAParam;
+	struct FXAAParam;
 	class FXAntiAliasing{
 	public:
 		FXAntiAliasing(IDXGISwapChain * swapChain, ID3D11Texture2D * sourceBuffer);

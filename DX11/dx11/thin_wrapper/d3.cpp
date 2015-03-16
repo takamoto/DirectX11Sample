@@ -16,7 +16,7 @@ namespace DX11ThinWrapper {
 
 			UINT createDeviceFlag = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #if defined(DEBUG) || defined(_DEBUG)
-			createDeviceFlag &= D3D11_CREATE_DEVICE_DEBUG;
+			createDeviceFlag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 			D3D_FEATURE_LEVEL featureLevels[] = {

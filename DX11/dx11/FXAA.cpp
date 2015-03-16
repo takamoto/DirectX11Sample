@@ -65,18 +65,24 @@ namespace dx11{
 		const D3D11_VIEWPORT & viewport
 	){
 		deviceContext->OMSetRenderTargets(1, &outputView, 0);
+		
+		// reset
+		deviceContext->IASetInputLayout(nullptr);
+		deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+		deviceContext->GSSetShader(nullptr, nullptr, 0);
+		deviceContext->DSSetShader(nullptr, nullptr, 0);
+		deviceContext->HSSetShader(nullptr, nullptr, 0);
 
 		// shader
 		deviceContext->VSSetShader(vertexShader.get(), nullptr, 0);
 		deviceContext->PSSetShader(pixelShader.get(), nullptr, 0);
-		deviceContext->GSSetShader(nullptr, nullptr, 0);
 
 		// state
 		deviceContext->OMSetBlendState(blendState.get(), 0, 0xffffffff);
 		deviceContext->RSSetState(rasterizerState.get());
 
 		auto samplerStates = samplerState.get();
-		deviceContext->PSSetSamplers(4, 1, &samplerStates);
+		deviceContext->PSSetSamplers(3, 1, &samplerStates);
 
 		// viewport
 		deviceContext->RSSetViewports(1, &viewport);
